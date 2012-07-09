@@ -3,7 +3,9 @@
 #
 # A Studentenwerk Thüringen Mensa scraper, producing XML for openMensa.
 
-import sys
+import sys; reload(sys)
+sys.setdefaultencoding('utf-8')
+
 from datetime import datetime, timedelta
 
 from requests import get
