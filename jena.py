@@ -63,7 +63,8 @@ if __name__ == '__main__':
             print '    <category name="Essen %i">' % (i+1)
             print '      <meal>'
             print '        <name>' + meal.name + '</name>'
-            print '        <note>' + meal.note + '</note>'
+            if meal.note:
+                print '        <note>' + meal.note + '</note>'
             print '        <price>' + meal.price + '</price>'
             print '      </meal>'
             print '    </category>'
