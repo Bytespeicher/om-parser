@@ -4,50 +4,36 @@
 # A Studentenwerk Thüringen Mensa scraper, producing XML for openMensa.
 
 import sys
-import urllib2
+from datetime import datetime, timedelta
 
+from requests import get
+from bs4 import BeautifulSoup
 
 MENSEN = {
-    'Ernst-Abbe-Platz': '/deutsch/mensen/einrichtungen/jena/mensa-ernst-abbe-platz.html',
-    'Philosophenweg': '/deutsch/mensen/einrichtungen/jena/mensa-philosophenweg.html',
-    'Carl-Zeiss-Promenade': '/deutsch/mensen/einrichtungen/jena/mensa-carl-zeiss-promenade.html'
+    'Ernst-Abbe-Platz': 'jena_eabp',
+    'Philosophenweg': 'jena_philweg',
+    'Carl-Zeiss-Promenade': 'jena_czprom',
+
+    # 'Weimar': 'weimar'
 }
 
 
-def get(uri='/'):
-    """A wrapper for GET-requests to www.stw-thueringen.de."""
-
-    req = urllib2.Request(
-        'http://www.stw-thueringen.de' + uri,
-        headers={'User-Agent': "Mozilla/5.0 Gecko/20120427 Firefox/15.0"}
-    )
-
-    try:
-        resp = urllib2.urlopen(req, timeout=10)
-    except (urllib2.URLError, urllib2.HTTPError) as e:
-        raise
-
-    return resp.code, resp.read()
-
-
-def extract(html):
+def extract(html, mensa='eabp', day=0):
     """Extract meals from HTML and yielding them as dictlike-object."""
 
-    i, j = html.find('<table'), html.find('</table>')
-    html = html[i:j] + '</table>'
+    soup = BeautifulSoup(html)
 
-    name = 'Foo'
-    date = 'Heute'
-    category = 'Essen 3.14'
-    description = 'mit Gehirn'
+    for i in range(5):
+        query = soup.find('a', href=lambda link: link.endswith('#%s_tag_%i_essen_%i' % (mensa, day, i)))
 
-    yield type('Meal', (object, ), {
-        'name': name,
-        'date': date,
-        'category': category,
-        'description': description,
-        '__getitem__': lambda cls, item: getattr(cls, item)
-    })()
+        if query is None:
+            raise StopIteration
+
+        yield type('Meal', (object, ), {
+            'name': query.h3.text.strip().replace('-', ''),
+            'note': query.p.text.strip().replace('-', ''),
+            'price': query.p.findNext().text.split()[1].replace(',', '.')
+        })()
 
 
 if __name__ == '__main__':
@@ -58,20 +44,28 @@ if __name__ == '__main__':
 
     try:
         mensa = [key for key in MENSEN if key.lower().startswith(sys.argv[1].lower())][0]
+        abbr = MENSEN[mensa]
     except IndexError:
         print '%s is not available. Try %s' % (sys.argv[1], ', '.join(MENSEN.keys()))
         sys.exit(1)
 
     print '<?xml version="1.0" encoding="UTF-8"?>'
-    print '<!DOCTYPE mensa SYSTEM "http://student.hpi.uni-potsdam.de/openMensa.dtd">'
+    print '<!DOCTYPE cafeteria SYSTEM "http://om.altimos.de/open-mensa-v1.dtd">'
 
-    code, html = get(uri=MENSEN[mensa])
-    print '<mensa>'
+    r = get('http://www.thueringen.my-mensa.de/essen.php?mensa=%s' % abbr, allow_redirects=False)
+    print '<cafeteria version="1.0">'
+    
+    for day in range(2):
+        print '  <!-- Studentenwerk Jena, %s -->' % mensa
+        print '  <day date="%s">' % (datetime.now() + timedelta(days=day)).strftime('%Y-%m-%d')
 
-    for meal in extract(html):
-        print '  <!-- Mensa %s -->' % mensa
-        print '  <meal name="%(name)s" date="%(date)s" category="%(category)s">' % meal
-        print '    <description>%(description)s</description>' % meal
-        print '  </meal>'
-
-    print '</mensa>'
+        for i, meal in enumerate(extract(r.content, abbr, day)):
+            print '    <category name="Essen %i">' % (i+1)
+            print '      <meal>'
+            print '        <name>' + meal.name + '</name>'
+            print '        <note>' + meal.note + '</note>'
+            print '        <price>' + meal.price + '</price>'
+            print '      </meal>'
+            print '    </category>'
+        print '  </day>'
+    print '</cafeteria>'
