@@ -56,9 +56,9 @@ if __name__ == '__main__':
 
     r = get('http://www.thueringen.my-mensa.de/essen.php?mensa=%s' % abbr, allow_redirects=False)
     print '<cafeteria version="1.0">'
+    print '  <!-- Studentenwerk Jena, %s -->' % mensa
     
     for day in range(5):
-        print '  <!-- Studentenwerk Jena, %s -->' % mensa
         print '  <day date="%s">' % (datetime.now() + timedelta(days=day)).strftime('%Y-%m-%d')
 
         for i, meal in enumerate(extract(r.content, abbr, day)):
