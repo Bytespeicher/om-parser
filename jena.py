@@ -15,6 +15,8 @@ MENSEN = {
     'Ernst-Abbe-Platz': 'jena/mensa-ernst-abbe-platz',
     'Philosophenweg': 'jena/mensa-philosophenweg',
     'Carl-Zeiss-Promenade': 'jena/mensa-carl-zeiss-promenade',
+    'vegeTable': 'jena/vegetable',
+    'Cafeteria Bibliothek (ThulB)': 'jena/cafeteria-bibliothek-thulb'
 
     # 'Weimar': 'weimar'
 }
