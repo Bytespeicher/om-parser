@@ -5,7 +5,9 @@
 
 ## Usage
 
-    $ python jena.py Ern [Carl ...[Phil ]]
+    $ python jena.py Erns [Carl ...[Phil ]]  # or more clever
+    $ make clean && make
+
 
 It is sufficient to provide only the first characters of the original name.
 For a complete list of available canteens, type some random characters and it
