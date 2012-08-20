@@ -12,9 +12,9 @@ from requests import get
 from bs4 import BeautifulSoup
 
 MENSEN = {
-    'Ernst-Abbe-Platz': 'jena_eabp',
-    'Philosophenweg': 'jena_philweg',
-    'Carl-Zeiss-Promenade': 'jena_czprom',
+    'Ernst-Abbe-Platz': 'jena/mensa-ernst-abbe-platz',
+    'Philosophenweg': 'jena/mensa-philosophenweg',
+    'Carl-Zeiss-Promenade': 'jena/mensa-carl-zeiss-promenade',
 
     # 'Weimar': 'weimar'
 }
@@ -24,17 +24,16 @@ def extract(html, mensa='eabp', day=0):
     """Extract meals from HTML and yielding them as dictlike-object."""
 
     soup = BeautifulSoup(html)
+    div = soup.find('div', id="day_%i" % (day+2))
 
-    for i in range(5):
-        query = soup.find('a', href=lambda link: link.endswith('#%s_tag_%i_essen_%i' % (mensa, day, i)))
+    # hidden in there as triple -> (müll, name, price)
+    td = div.table.find_all('td')
 
-        if query is None:
-            raise StopIteration
-
+    for i in range(0, len(td), 3):
         yield type('Meal', (object, ), {
-            'name': query.h3.text.strip().replace('-', ''),
-            'note': query.p.text.strip().replace('-', ''),
-            'price': query.p.findNext().text.split()[1].replace(',', '.')
+            'name': next(td[i+1].stripped_strings),
+            'note': "",
+            'price': td[i+2].text.strip().replace(',', '.').rstrip(' €')
         })()
 
 
@@ -54,13 +53,14 @@ if __name__ == '__main__':
     print '<?xml version="1.0" encoding="UTF-8"?>'
     print '<!DOCTYPE cafeteria SYSTEM "http://om.altimos.de/open-mensa-v1.dtd">'
 
-    r = get('http://www.thueringen.my-mensa.de/essen.php?mensa=%s' % abbr, allow_redirects=False)
+    r = get('http://www.stw-thueringen.de/deutsch/mensen/einrichtungen/%s.html' % abbr)
     print '<cafeteria version="1.0">'
     print '  <!-- Studentenwerk Jena, %s -->' % mensa
-    
+
     for day in range(5):
         print '  <day date="%s">' % (datetime.now() + timedelta(days=day)).strftime('%Y-%m-%d')
 
+        # for i, meal in enumerate(extract(open('philo-dump.html'), abbr, day)):
         for i, meal in enumerate(extract(r.content, abbr, day)):
             print '    <category name="Essen %i">' % (i+1)
             print '      <meal>'
