@@ -12,13 +12,30 @@ from requests import get
 from bs4 import BeautifulSoup
 
 MENSEN = {
+
+    # Jena
     'Ernst-Abbe-Platz': 'jena/mensa-ernst-abbe-platz',
     'Philosophenweg': 'jena/mensa-philosophenweg',
     'Carl-Zeiss-Promenade': 'jena/mensa-carl-zeiss-promenade',
     'vegeTable': 'jena/vegetable',
-    'Cafeteria Bibliothek (ThulB)': 'jena/cafeteria-bibliothek-thulb'
+    'Cafeteria Bibliothek (ThulB)': 'jena/cafeteria-bibliothek-thulb',
 
     # 'Weimar': 'weimar'
+    'am Park': 'weimar/mensa-am-park',
+
+    # Eisenach
+    'Mensa am Wartenberg': 'eisenach/mensa-am-wartenberg-2',
+
+    # Erfurt
+    'Nordhäuser Straße': 'erfurt/mensa-nordhaeuser-strasse',
+    'Altonaer Straße': 'erfurt/mensa-altonaer-strasse',
+
+    # Gera
+    'Studienakademie Gera': 'mensa-berufsakademie-gera',
+
+    # Ilmenau
+    'Ehrenberg': 'ilmenau/mensa-ehrenberg',
+    'NANOteria': 'ilmenau/cafeteria-nanoteria',
 }
 
 
