@@ -70,24 +70,29 @@ if __name__ == '__main__':
         sys.exit(1)
 
     print '<?xml version="1.0" encoding="UTF-8"?>'
-    print '<!DOCTYPE cafeteria SYSTEM "http://om.altimos.de/open-mensa-v1.dtd">'
+    print '<openmensa version="2.0"'
+    print            'xmlns="http://openmensa.org/open-mensa-v2"'
+    print            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+    print            'xsi:schemaLocation="http://openmensa.org/open-mensa-v2 http://openmensa.org/open-mensa-v2.xsd">'
 
     r = get('http://www.stw-thueringen.de/deutsch/mensen/einrichtungen/%s.html' % abbr)
-    print '<cafeteria version="1.0">'
-    print '  <!-- Studentenwerk Jena, %s -->' % mensa
+    print '  <canteen>'
 
     for day in range(5):
-        print '  <day date="%s">' % (datetime.now() + timedelta(days=day)).strftime('%Y-%m-%d')
+        print '    <day date="%s">' % (datetime.now() + timedelta(days=day)).strftime('%Y-%m-%d')
 
-        # for i, meal in enumerate(extract(open('philo-dump.html'), abbr, day)):
-        for i, meal in enumerate(extract(r.content, abbr, day)):
-            print '    <category name="Essen %i">' % (i+1)
-            print '      <meal>'
-            print '        <name>' + meal.name + '</name>'
+        meals = list(extract(r.content, abbr, day))
+        if not meals:
+            print '      <closed />'
+
+        for i, meal in enumerate(meals):
+            print '      <category name="Essen %i">' % (i+1)
+            print '        <meal>'
+            print '          <name>' + meal.name + '</name>'
             if meal.note:
-                print '        <note>' + meal.note + '</note>'
-            print '        <price>' + meal.price + '</price>'
-            print '      </meal>'
-            print '    </category>'
-        print '  </day>'
-    print '</cafeteria>'
+                print '          <note>' + meal.note + '</note>'
+            print '          <price role="student">' + meal.price + '</price>'
+            print '        </meal>'
+            print '      </category>'
+        print '    </day>'
+    print '</openmensa>'
