@@ -21,7 +21,7 @@ MENSEN = {
     'Cafeteria Bibliothek (ThulB)': 'jena/cafeteria-bibliothek-thulb',
 
     # 'Weimar': 'weimar'
-    'am Park': 'weimar/mensa-am-park',
+    'Mensa am Park': 'weimar/mensa-am-park',
 
     # Eisenach
     'Mensa am Wartenberg': 'eisenach/mensa-am-wartenberg-2',
@@ -31,7 +31,7 @@ MENSEN = {
     'Altonaer Straße': 'erfurt/mensa-altonaer-strasse',
 
     # Gera
-    'Studienakademie Gera': 'mensa-berufsakademie-gera',
+    'Studienakademie Gera': 'gera/mensa-berufsakademie-gera',
 
     # Ilmenau
     'Ehrenberg': 'ilmenau/mensa-ehrenberg',
@@ -46,7 +46,7 @@ def extract(html, mensa='eabp', day=0):
     div = soup.find('div', id="day_%i" % (day+2))
 
     # hidden in there as triple -> (müll, name, price)
-    td = div.table.find_all('td')
+    td = div.table.find_all('td') if div.table else []
 
     for i in range(0, len(td), 3):
         yield type('Meal', (object, ), {
