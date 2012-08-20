@@ -1,7 +1,7 @@
-#!/usr/local/bin/python2.7
+#!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 #
-# A Studentenwerk Thüringen Mensa scraper, producing XML for openMensa.
+# A Studentenwerk Thüringen Mensa scraper, producing XML for openmensa.org.
 
 import sys; reload(sys)
 sys.setdefaultencoding('utf-8')
