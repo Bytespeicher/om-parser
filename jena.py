@@ -46,7 +46,7 @@ def extract(html, mensa='eabp', day=0):
     div = soup.find('div', id="day_%i" % (day+2))
 
     # hidden in there as triple -> (müll, name, price)
-    td = div.table.find_all('td') if div.table else []
+    td = div.table.find_all('td') if div and div.table else []
 
     for i in range(0, len(td), 3):
         yield type('Meal', (object, ), {
