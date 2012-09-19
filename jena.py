@@ -95,4 +95,5 @@ if __name__ == '__main__':
             print '        </meal>'
             print '      </category>'
         print '    </day>'
+    print '  </canteen>'
     print '</openmensa>'
