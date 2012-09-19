@@ -5,7 +5,7 @@
 
 ## Usage
 
-    $ python jena.py Erns [Carl ...[Phil ]]  # or more clever
+    $ python thueringen.py Erns [Carl ...[Phil ]]  # or more clever
     $ make clean && make
 
 
