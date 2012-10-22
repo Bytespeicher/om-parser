@@ -6,6 +6,7 @@
 import sys; reload(sys)
 sys.setdefaultencoding('utf-8')
 
+from cgi import escape
 from datetime import datetime, timedelta
 
 from requests import get
@@ -88,9 +89,9 @@ if __name__ == '__main__':
         for i, meal in enumerate(meals):
             print '      <category name="Essen %i">' % (i+1)
             print '        <meal>'
-            print '          <name>' + meal.name + '</name>'
+            print '          <name>' + escape(meal.name) + '</name>'
             if meal.note:
-                print '          <note>' + meal.note + '</note>'
+                print '          <note>' + escape(meal.note) + '</note>'
             print '          <price role="student">' + meal.price + '</price>'
             print '        </meal>'
             print '      </category>'
