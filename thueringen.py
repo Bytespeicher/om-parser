@@ -53,7 +53,7 @@ def extract(html, mensa='eabp', day=0):
         yield type('Meal', (object, ), {
             'name': next(td[i+1].stripped_strings),
             'note': "",
-            'price': td[i+2].text.strip().replace(',', '.').rstrip(' €')
+            'price': td[i+2].text.strip().replace(',', '.').rstrip(' €') or '0.00'
         })()
 
 
